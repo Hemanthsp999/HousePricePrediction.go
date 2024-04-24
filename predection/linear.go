@@ -66,7 +66,7 @@ func (L *Linear) ModelPrediction(x []float64) []float64 {
 	L.Y = make([]float64, n)
 	for i := 0; i < n; i++ {
 		// where y is predicted value
-		L.Y[i] = L.slope*x[i] + L.intercept
+		L.Y[i] += L.slope*x[i] + L.intercept
 	}
 
 	return L.Y
@@ -83,8 +83,8 @@ func (L *Linear) StockModel(data [][]float64) {
 	closePrice := make([]float64, n)
 
 	for i, v := range data {
-		openPrice[i] = v[0]
-		closePrice[i] = v[1]
+		openPrice[i] = v[1]
+		closePrice[i] = v[4]
 	}
 
 	L.FitModel(openPrice, closePrice)

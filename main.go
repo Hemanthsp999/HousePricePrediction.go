@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-
 	"main.go/predection"
 )
 
@@ -35,15 +34,16 @@ func main() {
 		panic(err)
 	}
 
-	var x, y []float64
+	x := make([]float64,0)
+	y := make([]float64,0)
 
 	for _, record := range records {
-		xVal, err := strconv.ParseFloat(record[3], 64)
+		xVal, err := strconv.ParseFloat(record[1], 64)
 		if err != nil {
 			fmt.Println("Error", err)
 			return
 		}
-		yVal, err := strconv.ParseFloat(record[6], 64)
+		yVal, err := strconv.ParseFloat(record[4], 64)
 		if err != nil {
 			fmt.Println("Error", err)
 			return
