@@ -5,14 +5,14 @@ import (
 	"log"
 )
 
-func (M *Beta) MergeData(x Mat) [][]float64 {
+func MergeData(x Mat) [][]float64 {
 
 	// Get the Mat( x1, x2) Structure and Bind it to 2d array
 	n := len(x.X1)
 	MergeMat := make([][]float64, n)
 
 	for i := range MergeMat {
-		MergeMat[i] = []float64{x.X1[i], x.X2[i], x.X3[i]}
+		MergeMat[i] = []float64{x.X1[i], x.X2[i],x.X3[i]}
 	}
 
 	return MergeMat
@@ -22,11 +22,6 @@ func Transpose(x [][]float64) [][]float64 {
 
 	n := len(x)
 	m := len(x[0])
-
-	fmt.Println("Before Transpose")
-	for _, v := range x {
-		fmt.Println(v)
-	}
 
 	// Each Columns in the Original Matrix should be equal to each Row in the Transpose Matrix
 	TransposeMatrix := make([][]float64, m)
@@ -40,11 +35,6 @@ func Transpose(x [][]float64) [][]float64 {
 		for j := 0; j < m; j++ {
 			TransposeMatrix[j][i] = x[i][j]
 		}
-	}
-
-	fmt.Println("After transpose")
-	for _, v := range TransposeMatrix {
-		fmt.Println(v)
 	}
 
 	return TransposeMatrix
