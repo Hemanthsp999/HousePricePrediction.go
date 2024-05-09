@@ -1,8 +1,19 @@
-Stock Prediction using Multiple Linear Regression in Go Lang(Still working on it....)
+### House Price Prediction using Multiple Linear Regression in Go Lang
 
-## No External Library or Inbuilt functions are used for Model. Building it from scratch
-### Once Cloned 
+## No External Library or functions are used for Model building
+
+## Built from scratch.
+
+### Once Cloned
+
 do update the mod file
+
 ```bash
 go mod tidy
+```
+
+### To run model?
+
+```bash
+go run .  or go run main.go
 ```

@@ -5,14 +5,16 @@ import (
 	"log"
 )
 
-func MergeData(x Mat) [][]float64 {
+func MergeMat(x Mat) [][]float64 {
 
-	// Get the Mat( x1, x2) Structure and Bind it to 2d array
+	// Get the Mat( x1, x2, ....., xn) Structure and Bind it to 2d array
 	n := len(x.X1)
 	MergeMat := make([][]float64, n)
 
 	for i := range MergeMat {
-		MergeMat[i] = []float64{x.X1[i], x.X2[i],x.X3[i]}
+		// It forms a array of x[i][j]
+		// Or it something Looks like this x = [ [1,3,4], [3,2,3] ]
+		MergeMat[i] = []float64{x.X1[i], x.X2[i], x.X3[i]}
 	}
 
 	return MergeMat
@@ -80,6 +82,8 @@ func MulN(x [][]float64, y []float64) ([]float64, error) {
 }
 
 func LUInverse(matrix [][]float64) ([][]float64, error) {
+
+	// You can use Gussian Elemination method but for due to large Dataset i've used LU or you can use QR Decompose
 	n := len(matrix)
 	if n == 0 || len(matrix[0]) != n {
 		return nil, fmt.Errorf("input matrix must be square")
