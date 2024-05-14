@@ -1,6 +1,6 @@
 ### House Price Prediction using Multiple Linear Regression in Go Lang
 
-## No External Library or functions are used for Model building
+## No External Libraries are used for Model building
 
 ## Built from scratch.
 
