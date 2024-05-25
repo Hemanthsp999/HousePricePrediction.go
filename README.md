@@ -1,4 +1,4 @@
-### House Price Prediction using Multiple Linear Regression in Go Lang
+### Stock Price Prediction using Multiple Linear Regression in Go Lang
 
 ## No External Libraries are used for Model building
 
