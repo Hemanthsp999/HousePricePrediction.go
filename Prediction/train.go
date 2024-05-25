@@ -16,10 +16,10 @@ type Beta struct {
 	Slope     []float64
 }
 
-var M Beta
-
 type Mat struct {
 	// Independent Variables
+	// If you need to add extra independed variable, declare x4 like x1 []float64
+	// Then Move to "Matrix.go" for further information
 	X1 []float64
 	X2 []float64
 	X3 []float64
@@ -32,8 +32,8 @@ func (M *Beta) FitModel(x Mat, y []float64) {
 		panic(err)
 	}
 
-	// Below is coefficient
 	/*
+		Below is coefficient
 		Coefficients (ββ):
 		β^=(XTX)−1XTyβ^=(XTX)−1XTy
 	*/
@@ -69,12 +69,8 @@ func (M *Beta) FitModel(x Mat, y []float64) {
 		M.Slope[i] = slope[i]
 	}
 
-	for _, v := range M.Slope {
-		fmt.Println("Slopes are ", v)
-	}
-
-	// Below is Intercept
 	/*
+		Below is Intercept
 		InterCept Formula
 		β₀ = (1/n) * Σ(y - β₁x₁ - β₂x₂ - ... - βₚxₚ)
 	*/
@@ -85,13 +81,21 @@ func (M *Beta) FitModel(x Mat, y []float64) {
 	for i := 0; i < n; i++ {
 		intercept += y[i]
 		for j := 0; j < len(X[0]); j++ {
-			//sumCoefficient += M.Slope[j] * X[i][j]
 			intercept -= M.Slope[j] * X[i][j]
 		}
 	}
+
+	// you can adjust the learning Rate
+	learningRate := 0.5
+	// Updates the Slope
+	M.Slope = GradientDescent(M.Slope, y, X, learningRate, 10000)
+
 	M.Intercept = intercept / float64(n)
 
 	fmt.Println("Intercept point is ", M.Intercept)
+	for _, v := range M.Slope {
+		fmt.Println("Slopes are :", v)
+	}
 }
 
 func (M *Beta) PredictModel(x Mat, actual []float64) ([]float64, error) {
@@ -115,7 +119,61 @@ func (M *Beta) PredictModel(x Mat, actual []float64) ([]float64, error) {
 	return y, nil
 }
 
+func hypothesis(slope []float64, features []float64) float64 {
+	sum := slope[0]
+
+	for i := range slope {
+		sum += slope[i] * features[i]
+	}
+
+	return sum
+}
+
+func GradientDescent(slope []float64, acutal []float64, x [][]float64, learningRate float64, numIterate int) []float64 {
+	// Here x is dataset
+	n := len(x)
+	m := len(slope)
+
+	for iteration := 0; iteration < numIterate; iteration++ {
+		gradients := make([]float64, m)
+
+		for i := 0; i < n; i++ {
+			predict := hypothesis(slope, x[i])
+			for j := 0; j < m; j++ {
+				gradients[j] += (predict - acutal[i]) * x[i][j]
+			}
+		}
+
+		for j := 0; j < m; j++ {
+			slope[j] -= (learningRate / float64(n)) * gradients[j]
+		}
+	}
+
+	return slope
+}
+
+func (M *Beta) CostFunction(actual []float64, predicted []float64) float64 {
+
+	if len(actual) != len(predicted) {
+		log.Fatal("Lenght of actual and predicted are not equal")
+		return 0
+	}
+
+	var cost float64
+	var numerator float64
+
+	for i := range actual {
+		numerator = math.Pow(predicted[i]-actual[i], 2)
+		cost += numerator
+	}
+
+	cost /= float64(2 * len(actual))
+
+	return cost
+}
+
 func (M *Beta) Rsquare(actual []float64, predict []float64) (float64, float64, error) {
+	// Calculates Performance
 
 	if len(actual) != len(predict) {
 		log.Fatal("error")
@@ -134,15 +192,16 @@ func (M *Beta) Rsquare(actual []float64, predict []float64) (float64, float64, e
 		sst = math.Pow(actual[i]-meanActual, 2)
 	}
 
-	R := 1 - (sse / sst)
+	R2 := 1 - (sse / sst)
 
-	adjR := 1 - ((1 - R) * float64(n-1) / float64(n-len(M.Slope)-1))
+	adjR := 1 - ((1 - R2) * float64(n-1) / float64(n-len(M.Slope)-1))
 
-	return R, adjR, nil
+	return R2, adjR, nil
 
 }
 
 func (M *Beta) Error(Actual []float64, Predicted []float64) (float64, float64) {
+	// Calculates MSE RMSE
 	if len(Actual) != len(Predicted) {
 		log.Fatal("Size of actual and predicted not equal")
 	}
@@ -171,6 +230,7 @@ func (M *Beta) SplitDataset(data [][]string, numFolds int, foldIndex int) ([][]s
 
 	var trainSet [][]string
 	for i, fold := range folds {
+		// The data should not be in testSet then it appends to trainSet
 		if i != testFold {
 			trainSet = append(trainSet, fold...)
 		}
@@ -182,9 +242,11 @@ func (M *Beta) SplitDataset(data [][]string, numFolds int, foldIndex int) ([][]s
 func SplitIntoKFolds(data [][]string, numFolds int) [][][]string {
 
 	shuffleData := make([][]string, len(data))
+	// Copies data to shuffleData
 	copy(shuffleData, data)
 
 	rand.Seed(time.Now().UnixNano())
+	// Shuffle the data and swap it
 	rand.Shuffle(len(shuffleData), func(i, j int) { shuffleData[i], shuffleData[j] = shuffleData[j], shuffleData[i] })
 
 	foldSize := len(data) / numFolds
@@ -204,17 +266,21 @@ func SplitIntoKFolds(data [][]string, numFolds int) [][][]string {
 }
 
 func (M *Beta) PrepareData(records [][]string) ([]float64, []float64, []float64, []float64) {
+	// Default File is in String format
+	// Specific String column (ex : "go for Label 1 below") is converted into Float and returns it
 
 	x1 := make([]float64, 0)
 	x2 := make([]float64, 0)
 	x3 := make([]float64, 0)
 	y := make([]float64, 0)
 
+	// Label 1
 	for _, record := range records {
-		x1Val, _ := strconv.ParseFloat(record[1], 64)
-		x2Val, _ := strconv.ParseFloat(record[3], 64)
-		x3Val, _ := strconv.ParseFloat(record[4], 64)
-		yVal, _ := strconv.ParseFloat(record[0], 64)
+		// Choose the Independent And Dependent Column index
+		x1Val, _ := strconv.ParseFloat(record[4], 64)
+		x2Val, _ := strconv.ParseFloat(record[5], 64)
+		x3Val, _ := strconv.ParseFloat(record[6], 64)
+		yVal, _ := strconv.ParseFloat(record[8], 64)
 
 		x1 = append(x1, x1Val)
 		x2 = append(x2, x2Val)
@@ -227,6 +293,7 @@ func (M *Beta) PrepareData(records [][]string) ([]float64, []float64, []float64,
 
 func (M *Beta) LoadCsv(fileName string) ([][]string, error) {
 
+	// Opens the file
 	file, err := os.Open(fileName)
 	if err != nil {
 		return nil, err
@@ -244,9 +311,12 @@ func (M *Beta) LoadCsv(fileName string) ([][]string, error) {
 }
 
 func (M *Beta) SummaryStats(records [][]string) {
+	// Performs Exploratory Data Analysis (EDA)
+	// First row i.e column names
 	headers := records[0]
 	data := records[1:]
 
+	// if the column value is numeric then numCols marks it as true otherwise false
 	numCols := make(map[int]bool)
 	for i, val := range headers {
 		if _, err := strconv.ParseFloat(val, 64); err == nil {
@@ -256,6 +326,7 @@ func (M *Beta) SummaryStats(records [][]string) {
 
 	for i, col := range headers {
 		if numCols[i] {
+			// for each numericValue it Stores it in values
 			values := make([]float64, len(data))
 
 			for j, row := range data {
@@ -263,6 +334,7 @@ func (M *Beta) SummaryStats(records [][]string) {
 				values[j] = val
 			}
 
+			// Calculates Mean, Min, Max
 			mean, min, max := calculateStats(values)
 			fmt.Printf("Column %s, Mean %2f  Min %.2f  Max %.2f\n", col, mean, min, max)
 		}
@@ -270,6 +342,7 @@ func (M *Beta) SummaryStats(records [][]string) {
 }
 
 func calculateStats(data []float64) (mean, min, max float64) {
+	// returns Mean, Min, Max
 	n := len(data)
 
 	if n == 0 {

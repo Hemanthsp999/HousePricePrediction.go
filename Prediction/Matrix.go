@@ -12,8 +12,9 @@ func MergeMat(x Mat) [][]float64 {
 	MergeMat := make([][]float64, n)
 
 	for i := range MergeMat {
-		// It forms a array of x[i][j]
+		// It converts x1,x2,x3 to X := [x1,x2,x3]
 		// Or it something Looks like this x = [ [1,3,4], [3,2,3] ]
+		// If you need to add other variable simpliy declare it in Mat Struct and add slice to below float
 		MergeMat[i] = []float64{x.X1[i], x.X2[i], x.X3[i]}
 	}
 
