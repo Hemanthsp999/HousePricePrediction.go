@@ -4,6 +4,8 @@
 
 ## Built from scratch.
 
+Model Predict the CLOSE PRICE based on provided OPEN HIGH and LOW variables, You can use it for other datasets also just change the Dataset and follow readme.md for furthur instructions
+
 ### Once Cloned
 
 do update the mod file
@@ -22,8 +24,8 @@ You will see like this, inside <b>"for loop (Ex : x1Val, \_ := strconv.ParseFloa
 " Here X represents Independent variable and Y is for Dependent variable"<br/>
 Change <b>"record[4] to record[your-index-value]"</b>
 
-
 ### How Add Independent Variable Slice ?
+
 To add independent variables slice go to "Prediction/train.go"<br/>
 There's a Mat struct you can see that
 
