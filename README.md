@@ -14,11 +14,22 @@ go mod tidy
 
 ### To choose Independent and Dependent variable
 
-Go to "PrepareData func" in Prediction/train.go
+Go to <b>"PrepareData func"</b> in Prediction/train.go
+
 ![GitHub Image](images/PrepareData.png)
-You will see like this, inside "for loop (Ex : x1[0],x2[0])"
-" Here x represents Independent variable and Y is for Dependent variable"
-Change indeces numbers with your acutal index numbers ( i.e Your Datasets variable index number)
+
+You will see like this, inside <b>"for loop (Ex : x1Val, \_ := strconv.ParseFloat(record[4],64))"</b><br/>
+" Here X represents Independent variable and Y is for Dependent variable"<br/>
+Change <b>"record[4] to record[your-index-value]"</b>
+
+
+### How Add Independent Variable Slice ?
+To add independent variables slice go to "Prediction/train.go"<br/>
+There's a Mat struct you can see that
+
+![GitHub Image](images/IndependentVariables.png)
+
+Declare Your variable there and read the comments for furthur updates
 
 ### To run model?
 
