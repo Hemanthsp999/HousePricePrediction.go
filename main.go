@@ -60,14 +60,14 @@ func main() {
 	}
 
 	// Plots the Train Prediction
-	Model.PlotGraph(yTrain, PredictedTrain, "Train.png")
+	Model.PlotGraph(yTrain, PredictedTrain, "ActualData.png")
 	PredictedModel := PredictedTest
 	for i := range PredictedTest {
 		fmt.Printf("%.2f \t%.2f\n", yTest[i], PredictedTest[i])
 	}
 
 	// Plots the Test Prediction
-	Model.PlotGraph(yTest, PredictedModel, "Test.png")
+	Model.PlotGraph(yTest, PredictedModel, "PredictedData.png")
 	Error1, Error2 := Model.Error(yTest, PredictedModel)
 
 	r2_score, adj_R2_score, err := Model.Rsquare(yTest, PredictedModel)
